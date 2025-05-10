@@ -4,31 +4,33 @@ on:
   schedule: # execute every 12 hours
     - cron: "* */12 * * *"
 
-  workflow_dispatch:
+  workflow_dispatch: # Cho phép chạy thủ công từ giao diện GitHub
 
   push:
     branches:
-    - main
+      - main # Kích hoạt khi có push lên nhánh 'main'
 
 jobs:
   generate:
     permissions:
-      contents: write
+      contents: write # Cấp quyền ghi vào repository (cần thiết để push snake.svg)
+      pull-requests: write # Cấp quyền tương tác với pull requests (có thể không cần thiết cho workflow này nếu bạn chỉ push, nhưng không gây hại)
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 5 # Đặt thời gian timeout tối đa cho job này
 
     steps:
+      # Bước 1: Tạo ảnh snake.svg
       - name: generate snake.svg
-        uses: Platane/snk/svg-only@v3
+        uses: Platane/snk/svg-only@v3 # Sử dụng action để tạo ảnh snake
         with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: dist/snake.svg?palette=github-dark
+          github_user_name: ${{ github.repository_owner }} # Lấy tên người dùng GitHub của chủ repo
+          outputs: dist/snake.svg?palette=github-dark # Đường dẫn và palette cho output file
 
-
+      # Bước 2: Đẩy ảnh snake.svg lên nhánh 'output'
       - name: push snake.svg to the output branch
-        uses: crazy-max/ghaction-github-pages@v3.1.0
+        uses: crazy-max/ghaction-github-pages@v3.1.0 # Sử dụng action để push lên GitHub Pages
         with:
-          target_branch: output
-          build_dir: dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          target_branch: output # Nhánh đích để push file (ví dụ: gh-pages hoặc output)
+          build_dir: dist # Thư mục chứa file cần đẩy (ở đây là thư mục 'dist' nơi snake.svg được tạo)
+        env: # Biến môi trường cho action này
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Sử dụng GitHub Token mặc định để xác thực
