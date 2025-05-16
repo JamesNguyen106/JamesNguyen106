@@ -1,4 +1,4 @@
-<h3 align="left">Hi 👋! My name is James and my intersted is AI </h3>
+<h3 align="left">Hi 👋! My name is James, AI & ML is my  interests </h3>
 
 ###
 
